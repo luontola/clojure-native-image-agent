@@ -18,6 +18,11 @@
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
     </properties>
 
+    <scm>
+        <connection>scm:git:https://github.com/luontola/clojure-native-image-agent.git</connection>
+        <url>https://github.com/luontola/clojure-native-image-agent</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -39,7 +44,7 @@
     </dependencyManagement>
 
     <build>
-        <finalName>${artifactId}</finalName>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
 
             <plugin>
@@ -74,6 +79,17 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <pushChanges>false</pushChanges>
+                    <scmReleaseCommitComment>Release @{releaseLabel}</scmReleaseCommitComment>
+                    <scmDevelopmentCommitComment>Prepare for next development iteration</scmDevelopmentCommitComment>
+                </configuration>
             </plugin>
 
         </plugins>
