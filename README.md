@@ -32,6 +32,12 @@ on the command line, so that it will run first.
 
 This will write in the `output-dir` a list of classes that were loaded during the initialization of `initialize-class`.
 
+## Future plans
+
+* Generate `native-image.properties`
+* Shorten the `--initialize-at-build-time` parameter list (for only Clojure namespaces) by listing the top-level
+  packages instead of individual classes
+
 ## Developing
 
 Build `target/clojure-native-image-agent.jar `
