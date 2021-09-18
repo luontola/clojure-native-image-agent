@@ -17,6 +17,9 @@ by `native-image-agent` will be shorter.
 
 ## Using
 
+Download [clojure-native-image-agent.jar](https://github.com/luontola/clojure-native-image-agent/releases/latest/download/clojure-native-image-agent.jar)
+from [releases](https://github.com/luontola/clojure-native-image-agent/releases).
+
 Run `clojure-native-image-agent.jar` as a Java agent together with `native-image-agent`.
 
 **The order of command line parameters matters:** `clojure-native-image-agent.jar` must be before `native-image-agent`
