@@ -7,12 +7,12 @@ Because Clojure does lots of reflection and bytecode generation when a namespace
 use [build-time initialization](https://www.graalvm.org/reference-manual/native-image/ClassInitialization/)
 for all Clojure namespaces when compiling it with GraalVM Native Image. We would like `native-image-agent` to not report
 about the reflection and resource usages that happen during Clojure namespace loading. Also we would like to generate
-the correct list of classes to put in `--initialize-at-build-time`, i.e. all Clojure classes and the Java classes which
-were used during Clojure namespace loading.
+the correct list of classes to put in `--initialize-at-build-time`, i.e. all Clojure namespaces and the Java classes
+which were used during Clojure namespace loading.
 
-This Java agent can help with that. You can give it the main class of your Clojure application as parameter, and it will
-load the Clojure namespaces and track all classes that were loaded, before letting `native-image-agent` do its work. As
-a result, you get a list of classes to `--initialize-at-build-time`, and the configuration files generated
+That's where this Java agent comes in. You give it the main class of your Clojure application as a parameter, and it
+will initialize the Clojure namespaces and track all classes that were loaded, before letting `native-image-agent` do
+its thing. As a result, you get a list of classes to `--initialize-at-build-time`, and the configuration files generated
 by `native-image-agent` will be shorter.
 
 ## Using
@@ -30,7 +30,7 @@ on the command line, so that it will run first.
         -agentlib:native-image-agent=config-merge-dir=/tmp/native-image,config-write-period-secs=5 \
         -jar your-clojure-app.jar
 
-This write in the `output-dir` a list of classes that were loaded during the initialization of `initialize-class`.
+This will write in the `output-dir` a list of classes that were loaded during the initialization of `initialize-class`.
 
 ## Developing
 
