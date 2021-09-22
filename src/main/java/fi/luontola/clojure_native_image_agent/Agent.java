@@ -9,13 +9,99 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Agent {
+
+    public static final Set<String> EXCLUDED_PACKAGES = new HashSet<>(Arrays.asList(
+            // listed in com.oracle.svm.hosted.jdk.JDKInitializationFeature
+            "com.sun.crypto.provider",
+            "com.sun.java.util.jar.pack",
+            "com.sun.management",
+            "com.sun.naming.internal",
+            "com.sun.net.ssl",
+            "com.sun.nio.file",
+            "com.sun.nio.sctp",
+            "com.sun.nio.zipfs",
+            "com.sun.security.auth",
+            "com.sun.security.cert.internal.x509",
+            "com.sun.security.jgss",
+            "com.sun.security.ntlm",
+            "com.sun.security.sasl",
+            "java.io",
+            "java.lang",
+            "java.math",
+            "java.net",
+            "java.nio",
+            "java.security",
+            "java.text",
+            "java.time",
+            "java.util",
+            "javax.annotation.processing",
+            "javax.crypto",
+            "javax.lang.model",
+            "javax.management",
+            "javax.naming",
+            "javax.net",
+            "javax.security.auth",
+            "javax.security.cert",
+            "javax.security.sasl",
+            "javax.tools",
+            "jdk.internal",
+            "jdk.jfr",
+            "jdk.net",
+            "jdk.nio",
+            "jdk.vm.ci",
+            "org.ietf.jgss",
+            "sun.invoke",
+            "sun.launcher",
+            "sun.management",
+            "sun.misc",
+            "sun.net",
+            "sun.nio",
+            "sun.reflect",
+            "sun.security.action",
+            "sun.security.ec",
+            "sun.security.internal.interfaces",
+            "sun.security.internal.spec",
+            "sun.security.jca",
+            "sun.security.jgss",
+            "sun.security.krb5",
+            "sun.security.mscapi",
+            "sun.security.pkcs",
+            "sun.security.pkcs10",
+            "sun.security.pkcs11",
+            "sun.security.pkcs12",
+            "sun.security.provider",
+            "sun.security.rsa",
+            "sun.security.smartcardio",
+            "sun.security.ssl",
+            "sun.security.timestamp",
+            "sun.security.tools",
+            "sun.security.util",
+            "sun.security.validator",
+            "sun.security.x509",
+            "sun.text",
+            "sun.util",
+            // listed in com.oracle.svm.hosted.classinitialization.ClassInitializationFeature#initializeNativeImagePackagesAtBuildTime
+            "com.oracle.graal",
+            "com.oracle.svm",
+            "org.graalvm.collections",
+            "org.graalvm.compiler",
+            "org.graalvm.home",
+            "org.graalvm.nativeimage",
+            "org.graalvm.options",
+            "org.graalvm.polyglot",
+            "org.graalvm.util",
+            "org.graalvm.word"
+    ));
 
     public static void premain(String agentArgs, Instrumentation inst) throws ClassNotFoundException, IOException {
         Map<String, String> args = parseArgs(agentArgs);
@@ -91,5 +177,23 @@ public class Agent {
 
     private static void log(String message) {
         System.out.println("clojure-native-image-agent: " + message);
+    }
+
+    public static boolean isJdkClass(String className) {
+        String pkg = packageName(className);
+        if (pkg.isEmpty()) {
+            return false;
+        }
+        return EXCLUDED_PACKAGES.contains(pkg)
+                || isJdkClass(pkg); // check recursively if parent package is excluded
+    }
+
+    private static String packageName(String className) {
+        int i = className.lastIndexOf('.');
+        if (i < 0) {
+            return "";
+        } else {
+            return className.substring(0, i);
+        }
     }
 }
