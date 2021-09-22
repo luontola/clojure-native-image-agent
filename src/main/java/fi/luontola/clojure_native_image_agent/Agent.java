@@ -46,8 +46,22 @@ public class Agent {
         };
         inst.addTransformer(transformer);
         Class.forName(className);
+
+        List<String> initializedClasses = new ArrayList<>();
+        while ((className = loadedClasses.poll()) != null) {
+            // The transformer detects when the JVM loads a class, but that doesn't mean
+            // that the class will also be initialized. Classes which are not initialized
+            // should be excluded from --initialize-at-build-time configuration, but aside
+            // from injecting a tracer method call to the classes, there is no easy to way
+            // to find out whether a class was initialized.
+            // Instead, here we do the second workaround: Force initialize all classes that
+            // were loaded.
+            Class.forName(className);
+            initializedClasses.add(className);
+        }
+
         inst.removeTransformer(transformer);
-        return new ArrayList<>(loadedClasses);
+        return initializedClasses;
     }
 
     public static Map<String, String> parseArgs(String args) {
