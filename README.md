@@ -30,13 +30,18 @@ on the command line, so that it will run first.
         -agentlib:native-image-agent=config-merge-dir=/tmp/native-image,config-write-period-secs=5 \
         -jar your-clojure-app.jar
 
-This will write in the `output-dir` a list of classes that were loaded during the initialization of `initialize-class`.
+This will generate a `native-image.properties` configuration file in the `output-dir` directory, based on the classes
+that were loaded during the initialization of `initialize-class`.
+
+The configuration is simplified for Clojure namespaces, so that only the top level package is listed. Most JDK classes
+are excluded from the configuration, because GraalVM Native Image already handles those. The unredacted list of classes
+is written to `initialized-classes.txt` for debugging purposes.
 
 ## Future plans
 
-* Generate `native-image.properties`
-* Shorten the `--initialize-at-build-time` parameter list (for only Clojure namespaces) by listing the top-level
-  packages instead of individual classes
+Currently, the agent initializes all classes that were loaded during initialization. But the Clojure compiler also loads
+some classes (Java libraries) without initializing them. Excluding those classes from `--initialize-at-build-time` would
+reduce the risk of encountering incompatible classes.
 
 ## Developing
 
