@@ -4,7 +4,7 @@
 
     <groupId>fi.luontola.graalvm-utils</groupId>
     <artifactId>clojure-native-image-agent</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <prerequisites>
@@ -20,7 +20,7 @@
     <scm>
         <connection>scm:git:https://github.com/luontola/clojure-native-image-agent.git</connection>
         <url>https://github.com/luontola/clojure-native-image-agent</url>
-        <tag>v0.2.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
