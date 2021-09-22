@@ -7,23 +7,23 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class AgentTest {
+public class ParseArgsTest {
 
     @Test
-    public void test_parseArgs_no_args() {
+    public void no_args() {
         Map<String, String> expected = new HashMap<>();
         assertEquals(expected, Agent.parseArgs(""));
     }
 
     @Test
-    public void test_parseArgs_one_arg() {
+    public void one_arg() {
         Map<String, String> expected = new HashMap<>();
         expected.put("foo", "1");
         assertEquals(expected, Agent.parseArgs("foo=1"));
     }
 
     @Test
-    public void test_parseArgs_many_args() {
+    public void many_args() {
         Map<String, String> expected = new HashMap<>();
         expected.put("foo", "1");
         expected.put("bar", "2");
