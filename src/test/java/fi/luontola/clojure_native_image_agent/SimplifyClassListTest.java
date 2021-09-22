@@ -21,7 +21,7 @@ public class SimplifyClassListTest {
     }
 
     @Test
-    public void simplifies_Clojure_namespaces_to_just_the_top_level_package() {
+    public void simplifies_Clojure_classes_to_just_the_top_level_package() {
         assertEquals(Arrays.asList("clojure"),
                 Agent.simplifyClassList(Arrays.asList(
                         "clojure.core$vec",
@@ -29,5 +29,15 @@ public class SimplifyClassListTest {
                         "clojure.core__init",
                         "clojure.core.reducers__init",
                         "clojure.lang.Atom")));
+    }
+
+    @Test
+    public void doesnt_simplify_Clojure_classes_in_the_default_package() {
+        assertEquals(Arrays.asList(
+                        "bad_library$foo",
+                        "bad_library__init"),
+                Agent.simplifyClassList(Arrays.asList(
+                        "bad_library$foo",
+                        "bad_library__init")));
     }
 }

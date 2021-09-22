@@ -193,7 +193,10 @@ public class Agent {
         Set<String> clojurePackages = new HashSet<>();
         for (String cls : classes) {
             if (cls.endsWith("__init")) {
-                clojurePackages.add(packageName(cls));
+                String pkg = packageName(cls);
+                if (!pkg.isEmpty()) {
+                    clojurePackages.add(pkg);
+                }
             }
         }
         keepOnlyTopLevelPackages(clojurePackages);
