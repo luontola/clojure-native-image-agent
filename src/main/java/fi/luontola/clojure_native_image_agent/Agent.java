@@ -56,7 +56,13 @@ public class Agent {
             // to find out whether a class was initialized.
             // Instead, here we do the second workaround: Force initialize all classes that
             // were loaded.
-            Class.forName(className);
+            try {
+                Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                // Some classes such as clojure.tools.logging$eval1 fail to load,
+                // likely due to runtime code generation. It should be okay to ignore them.
+                log("WARNING: Cannot initialize class: " + e);
+            }
             initializedClasses.add(className);
         }
 
