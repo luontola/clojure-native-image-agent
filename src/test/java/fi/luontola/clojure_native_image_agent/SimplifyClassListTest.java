@@ -19,4 +19,15 @@ public class SimplifyClassListTest {
         assertEquals(Arrays.asList("com.example.Foo"),
                 Agent.simplifyClassList(Arrays.asList("com.example.Foo")));
     }
+
+    @Test
+    public void simplifies_Clojure_namespaces_to_just_the_top_level_package() {
+        assertEquals(Arrays.asList("clojure"),
+                Agent.simplifyClassList(Arrays.asList(
+                        "clojure.core$vec",
+                        "clojure.core$vector",
+                        "clojure.core__init",
+                        "clojure.core.reducers__init",
+                        "clojure.lang.Atom")));
+    }
 }

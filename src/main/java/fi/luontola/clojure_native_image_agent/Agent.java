@@ -18,11 +18,12 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Agent {
 
     public static final String APP_NAME = "clojure-native-image-agent";
-    public static final Set<String> EXCLUDED_PACKAGES = new HashSet<>(Arrays.asList(
+    public static final Set<String> JDK_PACKAGES = new HashSet<>(Arrays.asList(
             // listed in com.oracle.svm.hosted.jdk.JDKInitializationFeature
             "com.sun.crypto.provider",
             "com.sun.java.util.jar.pack",
@@ -189,18 +190,36 @@ public class Agent {
     }
 
     public static List<String> simplifyClassList(List<String> classes) {
-        return classes.stream()
-                .filter(className -> !isJdkClass(className))
+        Set<String> clojurePackages = new HashSet<>();
+        for (String cls : classes) {
+            if (cls.endsWith("__init")) {
+                clojurePackages.add(packageName(cls));
+            }
+        }
+        keepOnlyTopLevelPackages(clojurePackages);
+
+        return Stream.concat(
+                        classes.stream()
+                                .filter(className -> !containsClass(className, JDK_PACKAGES))
+                                .filter(className -> !containsClass(className, clojurePackages)),
+                        clojurePackages.stream())
+                .sorted()
                 .collect(Collectors.toList());
     }
 
-    public static boolean isJdkClass(String className) {
-        String pkg = packageName(className);
-        if (pkg.isEmpty()) {
+    private static void keepOnlyTopLevelPackages(Set<String> ps) {
+        for (String p : new ArrayList<>(ps)) {
+            if (containsClass(packageName(p), ps)) {
+                ps.remove(p);
+            }
+        }
+    }
+
+    public static boolean containsClass(String className, Set<String> filters) {
+        if (className.isEmpty()) {
             return false;
         }
-        return EXCLUDED_PACKAGES.contains(pkg)
-                || isJdkClass(pkg); // check recursively if parent package is excluded
+        return filters.contains(className) || containsClass(packageName(className), filters);
     }
 
     private static String packageName(String className) {
