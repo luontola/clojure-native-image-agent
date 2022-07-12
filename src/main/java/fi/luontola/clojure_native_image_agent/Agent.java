@@ -154,7 +154,7 @@ public class Agent {
             // were loaded.
             try {
                 Class.forName(className);
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
                 // Some classes such as clojure.tools.logging$eval1 fail to load,
                 // likely due to runtime code generation. It should be okay to ignore them.
                 log("WARNING: Cannot initialize class: " + e);
